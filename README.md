@@ -1,5 +1,5 @@
 #NicAlarming
- A monitoring solution for NicLabs projets and containers with [Prometheus](https://github.com/prometheus/prometheus), [Grafana](https://github.com/grafana/grafana), [cAdvisor](https://github.com/google/cadvisor), [NodeExporter](https://github.com/prometheus/node_exporter), [PostgresExporter](https://github.com/wrouesnel/postgres_exporter), [NginxExporter](https://github.com/hnlq715/nginx-vts-exporter) and alerting with [AlertManager](https://github.com/prometheus/alertmanager), [Bot Telegram](https://github.com/inCaller/prometheus_bot)..
+ A monitoring solution for NicLabs projets with [Prometheus](https://github.com/prometheus/prometheus), [Grafana](https://github.com/grafana/grafana), [cAdvisor](https://github.com/google/cadvisor), [NodeExporter](https://github.com/prometheus/node_exporter), [PostgresExporter](https://github.com/wrouesnel/postgres_exporter), [NginxExporter](https://github.com/hnlq715/nginx-vts-exporter) and alerting with [AlertManager](https://github.com/prometheus/alertmanager), [Bot Telegram](https://github.com/inCaller/prometheus_bot)..
 
 ## Deploy Instructions
 
