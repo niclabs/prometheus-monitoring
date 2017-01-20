@@ -2,6 +2,62 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+function start_postgres_exporter {
+
+	# Below edit the database name, the user, the password, hostname and the port with our values.
+
+	sudo docker run --name postgres_exporter -e DATA_SOURCE_NAME="postgresql://login:password@hostname:port/dbname?sslmode=disable" -p 9187:9187 wrouesnel/postgres_exporter &
+}
+
+function stop_postgres_exporter {
+
+	docker stop postgres_exporter
+}
+
+function remove_postgres_exporter {
+	
+	docker rm postgres_exporter
+}
+
+function start_nginx_exporter {
+	
+	# Below edit nginx.scrape_uri with your Nginx status page.
+
+	sudo docker pull fish/nginx-exporter &
+
+	sudo docker run --name nginx_exporter -d -p 9113:9113 fish/nginx-exporter \
+    -nginx.scrape_uri="Nginx status page here"
+	
+}
+
+function stop_nginx_exporter{
+	
+	docker stop nginx_exporter
+}	
+
+function remove_nginx_exporter {
+
+	docker remove nginx_exporter
+}
+
+function start_blackbox {
+
+	sudo docker run -d --name blackbox \
+       --read-only \
+       -p 9115:9115 \
+       -v $(pwd)/blackbox_exporter/blackbox.yml:/etc/blackbox_exporter/config.yml \
+       prom/blackbox-exporter
+}
+
+function stop_blackbox {
+	
+	docker stop blackbox
+}
+
+function remove_blackbox {
+	
+	docker rm blackbox
+}
 
 function start_prometheus {
 	
@@ -95,20 +151,6 @@ function remove_cadvisor {
 	docker rm cadvisor
 }	
 
-function start_postgres_exporter {
-	
-	sudo docker run --name postgres_exporter -e DATA_SOURCE_NAME="postgresql://docker:docker@172.17.0.2:5432/docker?sslmode=disable" -p 9187:9187 wrouesnel/postgres_exporter &
-}
-
-function stop_postgres_exporter {
-
-	docker stop postgres_exporter
-}
-
-function remove_postgres_exporter {
-	
-	docker rm postgres_exporter
-}
 
 function start {
 
@@ -117,6 +159,8 @@ function start {
 	start_grafana
 	start_nodeexporter
 	start_cadvisor
+	start_blackbox
+	start_nginx_exporter
 	start_postgres_exporter
 	start_telegram_bot
 	
@@ -129,6 +173,8 @@ function stop {
 	stop_grafana
 	stop_nodeexporter
 	stop_cadvisor
+	stop_blackbox
+	stop_nginx_exporter
 	stop_postgres_exporter
 	stop_telegram_bot
 
@@ -137,6 +183,8 @@ function stop {
 function remove {
 
 	remove_cadvisor
+	remove_nginx_exporter
+	remove_blackbox
 	remove_nodeexporter
 	remove_postgres_exporter
 

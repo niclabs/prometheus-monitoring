@@ -21,16 +21,48 @@ function remove_postgres_exporter {
 
 function start_nginx_exporter {
 	
-	# Below edit nginx.scrape_uri with your Nginx JSON format status page.
+	# Below edit nginx.scrape_uri with your Nginx status page.
 
-	cd "$DIR/nginx_exporter"
-	./bin/nginx-vts-exporter -nginx.scrape_uri=http://localhost/status/format/json &
+	sudo docker pull fish/nginx-exporter &
+
+	sudo docker run --name nginx_exporter -d -p 9113:9113 fish/nginx-exporter \
+    -nginx.scrape_uri="Nginx status page here"
 	
+}
+
+function stop_nginx_exporter{
+	
+	docker stop nginx_exporter
+}	
+
+function remove_nginx_exporter {
+
+	docker remove nginx_exporter
+}
+
+function start_blackbox {
+
+	sudo docker run -d --name blackbox \
+       --read-only \
+       -p 9115:9115 \
+       -v $(pwd)/blackbox_exporter/blackbox.yml:/etc/blackbox_exporter/config.yml \
+       prom/blackbox-exporter
+}
+
+function stop_blackbox {
+	
+	docker stop blackbox
+}
+
+function remove_blackbox {
+	
+	docker rm blackbox
 }
 
 function start_prometheus {
 	
 	cd "$DIR/prometheus"
+	make build
 	./prometheus -config.file=prometheus.yml -alertmanager.url http://localhost:9093 &
 }
 
@@ -44,6 +76,7 @@ function stop_prometheus {
 function start_alertmanager {
 
 	cd "$DIR/alertmanager"
+	make build
 	./alertmanager -config.file=config.yaml &
 }
 
@@ -66,6 +99,9 @@ function stop_grafana {
 function start_telegram_bot {
 
 	cd "$DIR/prometheus_bot"
+	export GOPATH="your go path"
+	make clean
+	make
 	./prometheus_bot telegram_bot &
 }
 
@@ -128,6 +164,8 @@ function start {
 	start_grafana
 	start_nodeexporter
 	start_cadvisor
+	start_blackbox
+	start_nginx_exporter
 	start_postgres_exporter
 	start_telegram_bot
 	
@@ -140,6 +178,8 @@ function stop {
 	stop_grafana
 	stop_nodeexporter
 	stop_cadvisor
+	stop_blackbox
+	stop_nginx_exporter
 	stop_postgres_exporter
 	stop_telegram_bot
 
@@ -148,6 +188,8 @@ function stop {
 function remove {
 
 	remove_cadvisor
+	remove_nginx_exporter
+	remove_blackbox
 	remove_nodeexporter
 	remove_postgres_exporter
 
