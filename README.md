@@ -3,6 +3,35 @@
 
 ## Deploy Instructions
 
+Cloning repositories:
+
+1. NicAlarming
+
+	```shell
+	$ cd Prometheus
+	$ git clone https://github.com/cdotte/NicAlarming.git
+	```	
+
+2. Prometheus
+
+	```shell
+	$ cd Prometheus
+	$ git clone https://github.com/prometheus/prometheus
+	```
+3. AlertManager
+
+	```shell
+	$ cd Prometheus
+	$ git clone https://github.com/prometheus/alertmanager
+	```
+4. Prometheus bot
+
+	```shell
+	$ cd Prometheus
+	$ git clone https://github.com/inCaller/prometheus_bot
+	```	
+
+
 To deploy NicAlarming:
 
 1. Edit `run.sh`, in the file on method "start_postgres_exporter", edit the database name, the user, the password, hostname and the port with our values. For more info you can visit the link above (PostgresExporter). Also on method "start_nginx_exporter" you have to edit `-nginx.scrape_uri` with your Nginx JSON format status page
@@ -26,8 +55,8 @@ To deploy NicAlarming:
 Bash script to  start, restart, remove, upgrade and stop the application. The usage is:
 
 ```bash
-# To build, start, restart, stop, delete, upgrade
-$ ./run.sh build | start | restart | stop | delete | upgrade
+# To start, restart, stop, delete, upgrade
+$ ./run.sh start | restart | stop | delete | upgrade
 
 ```
 
