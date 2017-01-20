@@ -1,0 +1,8 @@
+route:
+  receiver: 'admins'
+
+receivers:
+- name: 'admins'
+  webhook_configs:
+  - send_resolved: True
+    url: http://127.0.0.1:9087/alert/-chatID

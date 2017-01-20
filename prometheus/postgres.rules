@@ -1,0 +1,8 @@
+ALERT postgres_doesnt_respond
+  IF  pg_exporter_last_scrape_error == 1
+  FOR 30s
+  LABELS { severity = "critical" }
+  ANNOTATIONS {
+      summary = "PostgreSQL does not respond to scrape metrics",
+      description = "PostgreSQL does not respond to scrape metrics",
+  }
