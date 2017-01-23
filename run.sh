@@ -2,11 +2,15 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+#TO EDIT
+GO = "your go path"
+PostgresURL = "postgresql://login:password@hostname:port/dbname?sslmode=disable"
+NginxURI = "your Nginx status page" #Example: http://172.17.42.1/nginx_status
+
 function start_postgres_exporter {
 
-	# Below edit the database name, the user, the password, hostname and the port with our values.
 
-	sudo docker run --name postgres_exporter -e DATA_SOURCE_NAME="postgresql://login:password@hostname:port/dbname?sslmode=disable" -p 9187:9187 wrouesnel/postgres_exporter &
+	sudo docker run --name postgres_exporter -e DATA_SOURCE_NAME="$PostgresURL" -p 9187:9187 wrouesnel/postgres_exporter &
 }
 
 function stop_postgres_exporter {
@@ -21,12 +25,11 @@ function remove_postgres_exporter {
 
 function start_nginx_exporter {
 	
-	# Below edit nginx.scrape_uri with your Nginx status page.
 
 	sudo docker pull fish/nginx-exporter &
 
 	sudo docker run --name nginx_exporter -d -p 9113:9113 fish/nginx-exporter \
-    -nginx.scrape_uri="Nginx status page here"
+    -nginx.scrape_uri="$NginxURI"
 	
 }
 
@@ -99,7 +102,7 @@ function stop_grafana {
 function start_telegram_bot {
 
 	cd "$DIR/prometheus_bot"
-	export GOPATH="your go path"
+	export GOPATH="$GO"
 	make clean
 	make
 	./prometheus_bot telegram_bot &
@@ -161,13 +164,13 @@ function start {
 
 	start_prometheus
 	start_alertmanager
+	start_telegram_bot	
 	start_grafana
 	start_nodeexporter
 	start_cadvisor
 	start_blackbox
 	start_nginx_exporter
 	start_postgres_exporter
-	start_telegram_bot
 	
 }
 
