@@ -3,9 +3,9 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #TO EDIT
-GO = "your go path"
-PostgresURL = "postgresql://login:password@hostname:port/dbname?sslmode=disable"
-NginxURI = "your Nginx status page" #Example: http://172.17.42.1/nginx_status
+GO="your go path"
+PostgresURL="postgresql://login:password@hostname:port/dbname?sslmode=disable"
+NginxURI="your Nginx status page" #Example: http://172.17.42.1/nginx_status
 
 function start_postgres_exporter {
 
@@ -33,7 +33,7 @@ function start_nginx_exporter {
 	
 }
 
-function stop_nginx_exporter{
+function stop_nginx_exporter {
 	
 	docker stop nginx_exporter
 }	
