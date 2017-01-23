@@ -45,10 +45,20 @@ Cloning repositories:
 
 To deploy NicAlarming:
 
-1. Edit `run.sh`, in the file on method "start_postgres_exporter", edit the database name, the user, the password, hostname and the port with our values. For more info you can visit the link above (PostgresExporter). Also on method "start_nginx_exporter" you have to edit `-nginx.scrape_uri` with your Nginx status page [here more information](https://nginx.org/en/docs/http/ngx_http_stub_status_module.html)
+1. Edit `run.sh`, in the file: 
+
+	Edit variable "GO" with yout GO path directory
+
+	on method "start_postgres_exporter", edit the database name, the user, the password, hostname and the port with our values. For more info you can visit the link above (PostgresExporter). 
+
+	on method "start_nginx_exporter" you have to edit `-nginx.scrape_uri` with your Nginx status page [here more information](https://nginx.org/en/docs/http/ngx_http_stub_status_module.html)
+
+
 
 2. To configure bot to alert with telegram:
+
 	Edit `prometheus_bot/config.yaml` with the token of your telegram bot.
+	
 	Edit `alertmanager/config.yaml` chatID with the ChatID of your group in telegram.
 
 3. Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress)
@@ -75,7 +85,7 @@ $ ./run.sh start | restart | stop | delete | upgrade
 
 ### Dashboards
 
-	Thanks to [dackprom](https://github.com/stefanprodan/dockprom) for the darshboards to Grafana's imports. 
+Thanks to [dackprom](https://github.com/stefanprodan/dockprom) for the darshboards to Grafana's imports. 
 
 ### Others
 
