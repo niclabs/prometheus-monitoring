@@ -29,7 +29,7 @@ function start_nginx_exporter {
 	sudo docker pull fish/nginx-exporter &
 
 	sudo docker run --name nginx_exporter -d -p 9113:9113 fish/nginx-exporter \
-    -nginx.scrape_uri="$NginxURI"
+    -nginx.scrape_uri="$NginxURI" &
 	
 }
 
@@ -40,11 +40,11 @@ function stop_nginx_exporter {
 
 function remove_nginx_exporter {
 
-	docker remove nginx_exporter
+	docker rm nginx_exporter
 }
 
 function start_blackbox {
-
+	
 	sudo docker run -d --name blackbox \
        --read-only \
        -p 9115:9115 \
@@ -65,6 +65,7 @@ function remove_blackbox {
 function start_prometheus {
 	
 	cd "$DIR/prometheus"
+	export GOPATH="$GO"
 	make build
 	./prometheus -config.file=prometheus.yml -alertmanager.url http://localhost:9093 &
 }
@@ -74,7 +75,6 @@ function stop_prometheus {
 	killall prometheus
 	
 }
-
 
 function start_alertmanager {
 
@@ -90,7 +90,7 @@ function stop_alertmanager {
 
 function start_grafana {
 
-	cd "$DIR/grafana"
+	cd "$DIR/grafana-2.5.0"
 	./bin/grafana-server web &
 }
 
@@ -162,13 +162,13 @@ function remove_cadvisor {
 
 function start {
 
+	start_blackbox
 	start_prometheus
 	start_alertmanager
 	start_telegram_bot	
 	start_grafana
 	start_nodeexporter
 	start_cadvisor
-	start_blackbox
 	start_nginx_exporter
 	start_postgres_exporter
 	

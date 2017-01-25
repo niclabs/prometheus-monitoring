@@ -68,12 +68,12 @@ To deploy NicAlarming:
 
 3. Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress)
 
-4. Edit `blackbox_exporter/blackbox.yml` with your end-points to monitoring. [here more information](https://github.com/prometheus/blackbox_exporter)
+4. Edit `blackbox_exporter/blackbox.yml` with your end-points to monitoring and edit prometheus config file. [here more information](https://github.com/prometheus/blackbox_exporter)
 
 5. Start the monitoring solution with
 
   ```shell
-  $ ./run.sh start
+  $ sudo ./run.sh start
   ```
 
 
@@ -89,6 +89,8 @@ $ ./run.sh start | restart | stop | delete | upgrade
 ```
 
 ### Dashboards
+
+You have to import in grafana all dashboards available in a folder "dashboards". Below there is more information.
 
 Thanks to [dackprom](https://github.com/stefanprodan/dockprom) for the darshboards to Grafana's imports. 
 
