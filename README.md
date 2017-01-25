@@ -104,4 +104,4 @@ Thanks to [dackprom](https://github.com/stefanprodan/dockprom) for the darshboar
 
 ### Logic of NicAlarming
 
-<img src="img/logic.jpeg" width="200" height="500">
+<img src="img/logic.jpeg" width="350" height="500">
