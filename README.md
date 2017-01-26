@@ -45,8 +45,20 @@ Cloning repositories:
 7. Copy all files of NicAlarming folder and paste into Prometheus (Yes to replace all files that already exists)
 
 
+### Dependencies
 
-To deploy NicAlarming:
+	- [GO](https://golang.org/)
+
+	- [Docker](https://www.docker.com/)
+
+	- You have to install with `sudo go get $dependencies` where $dependencies:
+
+		github.com/gin-gonic/gin
+		github.com/gin-gonic/gin/binding
+		github.com/go-telegram-bot-api/telegram-bot-api 
+		gopkg.in/yaml.v2
+
+### To deploy NicAlarming:
 
 1. Edit `run.sh`, in the file: 
 
@@ -66,7 +78,7 @@ To deploy NicAlarming:
 
 	Add grafana dashboards link to your telegram group to quickly visit if something goes wrong.
 
-3. Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress)
+3. Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress) or edit run.sh to link your containers.
 
 4. Edit `blackbox_exporter/blackbox.yml` with your end-points to monitoring and edit prometheus config file. [here more information](https://github.com/prometheus/blackbox_exporter)
 
@@ -101,6 +113,7 @@ Thanks to [dackprom](https://github.com/stefanprodan/dockprom) for the darshboar
 2. If you want to change existing rules for alarming. You have to change the next files `prometheus/host.rules`, `prometheus/targets.rules`, `prometheus/postgres.rules`, `prometheus/containers.rules`, `prometheus/host.rules`. 
 
 3. If you want to see Dashboards (Grafana) in a specific range of time. You have to visit [this](http://docs.grafana.org/reference/timerange/)
+
 
 
 
