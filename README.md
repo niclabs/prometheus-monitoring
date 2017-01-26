@@ -78,15 +78,22 @@ Cloning repositories:
 
 	Add grafana dashboards link to your telegram group to quickly visit if something goes wrong.
 
-3. Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress) or edit run.sh to link your containers.
+3. Edit `blackbox_exporter/blackbox.yml` with your end-points to monitoring and edit prometheus config file. [here more information](https://github.com/prometheus/blackbox_exporter)
 
-4. Edit `blackbox_exporter/blackbox.yml` with your end-points to monitoring and edit prometheus config file. [here more information](https://github.com/prometheus/blackbox_exporter)
+4. Start the monitoring solution with
 
-5. Start the monitoring solution with
+	4.1
+  		```shell
+  		$ sudo ./run.sh start_tools
+  		```
+  	4.2
 
-  ```shell
-  $ sudo ./run.sh start
-  ```
+  		Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress) or edit run.sh to link your containers.
+
+  	4.4 
+  		```shell
+  		$ sudo ./run.sh start
+  		```
 
 
 ## Content

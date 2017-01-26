@@ -49,7 +49,7 @@ function start_blackbox {
        --read-only \
        -p 9115:9115 \
        -v $(pwd)/blackbox_exporter/blackbox.yml:/etc/blackbox_exporter/config.yml \
-       prom/blackbox-exporter
+       prom/blackbox-exporter &
 }
 
 function stop_blackbox {
@@ -123,7 +123,7 @@ function start_nodeexporter {
 	  quay.io/prometheus/node-exporter \
 	    -collector.procfs /host/proc \
 	    -collector.sysfs /host/sys \
-	    -collector.filesystem.ignored-mount-points "^/(sys|proc|dev|host|etc)($|/)"	
+	    -collector.filesystem.ignored-mount-points "^/(sys|proc|dev|host|etc)($|/)"	&
 }
 
 function stop_nodeexporter {
@@ -146,7 +146,7 @@ function start_cadvisor {
 		--publish=8080:8080 \
 		--detach=true \
 		--name=cadvisor \
-		google/cadvisor:latest
+		google/cadvisor:latest &
 }
 
 function stop_cadvisor {
@@ -160,10 +160,9 @@ function remove_cadvisor {
 }	
 
 
-function start {
+function start_tools {
 
 	start_blackbox
-	start_prometheus
 	start_alertmanager
 	start_telegram_bot	
 	start_grafana
@@ -172,6 +171,11 @@ function start {
 	start_nginx_exporter
 	start_postgres_exporter
 	
+}
+
+function start {
+
+	start_prometheus
 }
 
 function stop {
@@ -201,22 +205,25 @@ function remove {
 function restart {
 
 	stop
+	start_tools
 	start
 }
 
 function upgrade {
 
 	remove
+	start_tools
 	start
 }
 
 function usage {
-    echo "Usage: $0 start | restart | stop | remove | upgrade";
+    echo "Usage: $0 start_tools | start | restart | stop | remove | upgrade";
     exit 1;
     }
 
 
 case "$1" in
+    start_tools) start_tools ;;
     start) start ;;
     restart) restart ;;
     stop) stop ;;
