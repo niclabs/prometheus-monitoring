@@ -102,8 +102,8 @@ Cloning repositories:
 Bash script to  start, restart, remove, upgrade and stop the application. The usage is:
 
 ```bash
-# To start, restart, stop, delete, upgrade
-$ ./run.sh start | restart | stop | delete | upgrade
+# To start, start_tools, restart, stop, delete, upgrade
+$ ./run.sh start | start_tools | restart | stop | delete | upgrade
 
 ```
 
