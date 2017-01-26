@@ -83,17 +83,17 @@ Cloning repositories:
 4. Start the monitoring solution with
 
 	4.1
-  		```shell
-  		$ sudo ./run.sh start_tools
-  		```
+  	```shell
+  	$ sudo ./run.sh start_tools
+  	```
   	4.2
 
-  		Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress) or edit run.sh to link your containers.
+  	Edit `prometheus/prometheus.yml` scrape_configs with your ip adresses (I recommend check out the ip adress of the containers using `docker inspect --format '{{ .NetworkSettings.IPAddress }}' container_name_or_id` and local ip adress) or edit run.sh to link your containers.
 
   	4.4 
-  		```shell
-  		$ sudo ./run.sh start
-  		```
+  	```shell
+  	$ sudo ./run.sh start
+  	```
 
 
 ## Content
