@@ -47,11 +47,11 @@ Cloning repositories:
 
 ### Dependencies
 
-	- [GO](https://golang.org/)
+- [GO](https://golang.org/)
 
-	- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/)
 
-	- You have to install with `sudo go get $dependencies` where $dependencies:
+- You have to install with `sudo go get $dependencies` where $dependencies:
 
 		github.com/gin-gonic/gin
 		github.com/gin-gonic/gin/binding
