@@ -3,7 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #TO EDIT
-GO="your go path"
 PostgresURL="postgresql://login:password@hostname:port/dbname?sslmode=disable"
 NginxURI="your Nginx status page" #Example: http://172.17.42.1/nginx_status
 
@@ -19,24 +18,24 @@ function stop_postgres_exporter {
 }
 
 function remove_postgres_exporter {
-	
+
 	docker rm postgres_exporter
 }
 
 function start_nginx_exporter {
-	
+
 
 	sudo docker pull fish/nginx-exporter &
 
 	sudo docker run --name nginx_exporter -d -p 9113:9113 fish/nginx-exporter \
     -nginx.scrape_uri="$NginxURI" &
-	
+
 }
 
 function stop_nginx_exporter {
-	
+
 	docker stop nginx_exporter
-}	
+}
 
 function remove_nginx_exporter {
 
@@ -44,7 +43,7 @@ function remove_nginx_exporter {
 }
 
 function start_blackbox {
-	
+
 	sudo docker run -d --name blackbox \
        --read-only \
        -p 9115:9115 \
@@ -53,68 +52,18 @@ function start_blackbox {
 }
 
 function stop_blackbox {
-	
+
 	docker stop blackbox
 }
 
 function remove_blackbox {
-	
+
 	docker rm blackbox
 }
 
-function start_prometheus {
-	
-	cd "$DIR/prometheus"
-	export GOPATH="$GO"
-	make build
-	./prometheus -config.file=prometheus.yml -alertmanager.url http://localhost:9093 &
-}
-
-function stop_prometheus {
-	
-	killall prometheus
-	
-}
-
-function start_alertmanager {
-
-	cd "$DIR/alertmanager"
-	make build
-	./alertmanager -config.file=config.yaml &
-}
-
-function stop_alertmanager {
-	
-	killall alertmanager
-}
-
-function start_grafana {
-
-	cd "$DIR/grafana-2.5.0"
-	./bin/grafana-server web &
-}
-
-function stop_grafana {
-	
-	killall grafana-server
-}
-
-function start_telegram_bot {
-
-	cd "$DIR/prometheus_bot"
-	export GOPATH="$GO"
-	make clean
-	make
-	./prometheus_bot telegram_bot &
-}
-
-function stop_telegram_bot {
-	
-	killall prometheus_bot
-}
 
 function start_nodeexporter {
-	
+
 	sudo docker run -d --name nodeexporter -p 9100:9100 \
 	  -v "/proc:/host/proc" \
 	  -v "/sys:/host/sys" \
@@ -127,7 +76,7 @@ function start_nodeexporter {
 }
 
 function stop_nodeexporter {
-	
+
 	docker stop nodeexporter
 }
 
@@ -157,39 +106,25 @@ function stop_cadvisor {
 function remove_cadvisor {
 
 	docker rm cadvisor
-}	
+}
 
 
-function start_tools {
+function start {
 
 	start_blackbox
-	start_alertmanager
-	start_telegram_bot	
-	start_grafana
 	start_nodeexporter
 	start_cadvisor
 	start_nginx_exporter
 	start_postgres_exporter
-	
-}
 
-function start {
-
-	start_prometheus
 }
 
 function stop {
-
-	stop_prometheus
-	stop_alertmanager
-	stop_grafana
 	stop_nodeexporter
 	stop_cadvisor
 	stop_blackbox
 	stop_nginx_exporter
 	stop_postgres_exporter
-	stop_telegram_bot
-
 }
 
 function remove {
@@ -203,31 +138,19 @@ function remove {
 }
 
 function restart {
-
 	stop
-	start_tools
-	start
-}
-
-function upgrade {
-
-	remove
-	start_tools
 	start
 }
 
 function usage {
-    echo "Usage: $0 start_tools | start | restart | stop | remove | upgrade";
+    echo "Usage: $0 start | restart | stop | remove";
     exit 1;
-    }
-
+}
 
 case "$1" in
-    start_tools) start_tools ;;
     start) start ;;
     restart) restart ;;
     stop) stop ;;
     remove) remove ;;
-    upgrade) upgrade ;;
     *) usage ;;
 esac
