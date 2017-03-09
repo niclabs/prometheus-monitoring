@@ -10,37 +10,53 @@ global:
       monitor: 'niclabs_monitoring_system'
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+# Rules files contain definition for alerts the system will
+# raise when certain conditions are met.
 rule_files:
   - "targets.rules"
   - "host.rules"
   - "containers.rules"
   - "postgres.rules"
 
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
+# Configuration for the endpoints containing the metrics to scrape.
+# Every exporter you want to scrape must be added with the following syntax:
+#scrape_configs:
+#  - job_name: 'unique_name_for_the_exporter'
+#    scrape_interval: time_interval_between_scrapes[s,m]
+#    static_configs:
+#      - targets: ['address:port']
+# Below are the exporters included in this repository
+# Delete or add new ones and edit the addresses as necessary.
 scrape_configs:
   - job_name: 'nodeexporter'
     scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9100']
 
-  - job_name: 'cadvisor'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['localhost:8080']
+  # - job_name: 'cadvisor'
+  #   scrape_interval: 5s
+  #   static_configs:
+  #     - targets: ['localhost:8080']
+  #
+  # - job_name: 'postgres'
+  #   honor_labels: true
+  #   static_configs:
+  #     - targets: ['172.17.0.5:9187']
+  #
+  # - job_name: 'prometheus'
+  #   scrape_interval: 10s
+  #   static_configs:
+  #     - targets: ['localhost:9090']
+  #
+  # - job_name: 'nginx'
+  #   scrape_interval: 10s
+  #   static_configs:
+  #     - targets: ['localhost:9113']
 
-  - job_name: 'postgres'
-    honor_labels: true
+# AlertManager configuration
+alerting:
+  alertmanagers:
+  - scheme: https
     static_configs:
-      - targets: ['172.17.0.5:9187']
-
-  - job_name: 'prometheus'
-    scrape_interval: 10s
-    static_configs:
-      - targets: ['localhost:9090']
-
-  - job_name: 'nginx'
-    scrape_interval: 10s
-    static_configs:
-      - targets: ['localhost:9113']
-   
+    - targets:
+      - "172.30.65.217:9093"
