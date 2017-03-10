@@ -19,9 +19,11 @@ function run {
 
     ## Prometheus Server
     docker run -d -p 9090:9090 --name prom-server \
-    -v $DIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+    --link alertmanager:alertmanager \
+    -v $DIR/prometheus:/etc/prometheus \
     -v $DIR/storage:/prometheus \
-    prom/prometheus
+    prom/prometheus -alertmanager.url=http://alertmanager:9093 \
+    -config.file=/etc/prometheus/prometheus.yml \
 
     ## Grafana
     grafana_pass="secret"

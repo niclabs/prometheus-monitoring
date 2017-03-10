@@ -1,15 +1,21 @@
 modules:
       https_our_webservice:
         prober: http
-        timeout: 5s
+        timeout: 15s
         http:
           method: GET
-          valid_status_codes: [200]  # Defaults to 2xx
-          headers:
-            Host: <address>
-            Accept-Language: en-US
+          valid_status_codes: []  # Defaults to 2xx
           no_follow_redirects: false
           fail_if_ssl: false
-          fail_if_not_ssl: true
+          fail_if_not_ssl: false
+          fail_if_matches_regexp:
+          - "internal server error"
           fail_if_not_matches_regexp:
-          - "regex"
+          - "Resiliencia"
+      http_2xx:
+        prober: http
+        timeout: 5s
+        http:
+          valid_status_codes: []
+          method: GET
+          host: prometheus.io

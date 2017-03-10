@@ -7,7 +7,8 @@ function run {
        --read-only \
        -p 9115:9115 \
        -v $DIR/blackbox.yml:/etc/blackbox_exporter/config.yml \
-       prom/blackbox-exporter
+       prom/blackbox-exporter \
+			 -config.file=/etc/blackbox_exporter/config.yml
 }
 
 function start {

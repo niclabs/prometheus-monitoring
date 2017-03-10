@@ -9,15 +9,6 @@ global:
   external_labels:
       monitor: 'niclabs_monitoring_system'
 
-# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
-# Rules files contain definition for alerts the system will
-# raise when certain conditions are met.
-rule_files:
-  - "targets.rules"
-  - "host.rules"
-  - "containers.rules"
-  - "postgres.rules"
-
 # Configuration for the endpoints containing the metrics to scrape.
 # Every exporter you want to scrape must be added with the following syntax:
 #scrape_configs:
@@ -31,32 +22,43 @@ scrape_configs:
   - job_name: 'nodeexporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:9100']
+      - targets: ['172.30.65.217:9100']
 
-  # - job_name: 'cadvisor'
-  #   scrape_interval: 5s
-  #   static_configs:
-  #     - targets: ['localhost:8080']
-  #
-  # - job_name: 'postgres'
-  #   honor_labels: true
-  #   static_configs:
-  #     - targets: ['172.17.0.5:9187']
-  #
-  # - job_name: 'prometheus'
-  #   scrape_interval: 10s
-  #   static_configs:
-  #     - targets: ['localhost:9090']
-  #
-  # - job_name: 'nginx'
-  #   scrape_interval: 10s
-  #   static_configs:
-  #     - targets: ['localhost:9113']
+  - job_name: 'cadvisor'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['172.30.65.217:8080']
+
+  - job_name: "blackbox"
+    scrape_interval: "30s"
+    metrics_path: /probe
+    scheme: "http"
+    params:
+      module: ["https_our_webservice"]
+      target: ["172.30.65.53"]
+    static_configs:
+      - targets: ['172.30.65.217:9115']
+
+  - job_name: 'postgres'
+    honor_labels: true
+    static_configs:
+      - targets: ['172.30.65.217:9187']
+
+  - job_name: 'nginx'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['172.30.65.217:9113']
 
 # AlertManager configuration
 alerting:
   alertmanagers:
-  - scheme: https
+  - scheme: http
     static_configs:
     - targets:
-      - "172.30.65.217:9093"
+       - "172.30.65.217:9093"
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+# Rules files contain definition for alerts the system will
+# raise when certain conditions are met.
+rule_files:
+  - '/etc/prometheus/*.rules'
