@@ -21,6 +21,7 @@ function stop {
 }
 
 function delete {
+	stop
 	docker rm postgres_exporter
 }
 
