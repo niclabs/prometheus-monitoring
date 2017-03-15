@@ -39,6 +39,16 @@ scrape_configs:
     static_configs:
       - targets: ['172.30.65.217:9115']
 
+  - job_name: "blackbox_ping"
+    scrape_interval: "15s"
+    metrics_path: /probe
+    scheme: "http"
+    params:
+      module: ["icmp_example"]
+      target: ["172.30.65.178"]
+    static_configs:
+    - targets: ['172.30.65.217:9115']
+
   - job_name: 'postgres'
     honor_labels: true
     static_configs:
