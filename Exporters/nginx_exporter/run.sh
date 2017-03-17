@@ -6,7 +6,7 @@ NginxURI="http://nginx/nginx_status" #Example: http://172.17.42.1/nginx_status
 
 function run {
 	sudo docker run --name nginx_exporter -d -p 9113:9113 \
-		--link nginx-nv:nginx \
+		--link <nginx-container>:nginx \ # Comment thie line if not containerized
 		fish/nginx-exporter -nginx.scrape_uri="$NginxURI"
 }
 
