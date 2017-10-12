@@ -6,31 +6,39 @@ function usage {
     }
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+grafana_pass="niclabs.13"
 
 function run {
     # run the docker containers
+    ## Telegram Bot
+    cd $DIR/prometheus_bot
+    docker build --tag telegram-bot .
+    cd $DIR
+    docker run -v $(pwd)/prometheus_bot:/bot/prometheus_bot/config --name telegram-bot \
+	  --restart=always -d telegram-bot -c /bot/prometheus_bot/config/config.yaml -d
+
     ## Alertmanager
     docker run -d -p 9093:9093 --name alertmanager \
-    -v $DIR/alertmanager/config.yml:/etc/alertmanager/config.yml \
-    prom/alertmanager
-
-    ## Telegram Bot
-    ## TODO add telegram bot
+    --link telegram-bot:telegram-bot  --restart=always \
+    -v /etc/localtime:/etc/localtime:ro  \
+    -v $DIR/alertmanager:/etc/alertmanager/config \
+    prom/alertmanager -config.file=/etc/alertmanager/config/config.yml
 
     ## Prometheus Server
     docker run -d -p 9090:9090 --name prom-server \
-    --link alertmanager:alertmanager \
+    --link alertmanager:alertmanager  --restart=always \
+    --link blackbox:blackbox \
+    -v /etc/localtime:/etc/localtime:ro  \
     -v $DIR/prometheus:/etc/prometheus \
     -v $DIR/storage:/prometheus \
     prom/prometheus -alertmanager.url=http://alertmanager:9093 \
     -config.file=/etc/prometheus/prometheus.yml \
 
     ## Grafana
-    grafana_pass="secret"
     docker run -d -p 3000:3000 --name grafana \
     -e "GF_SECURITY_ADMIN_PASSWORD=$grafana_pass" \
-    --link prom-server:prom-server \
-    grafana/grafana
+    --link prom-server:prom-server --restart=always \
+    grafana/grafana:4.5.2
     printf "Starting Grafana "
     until $(curl --output /dev/null --silent --fail http://127.0.0.1:3000); do
       printf "."
@@ -49,33 +57,49 @@ function add_datasource {
   curl --output /dev/null --silent\
   -H "Content-Type: application/json" -X POST \
   -d "{\"name\":\"Prometheus\",\"type\":\"prometheus\",\"access\":\"proxy\",\"url\":\"http://prom-server:9090\",\"basicAuth\":false}" \
-  http://admin:secret@127.0.0.1:3000/api/datasources
+  http://admin:$grafana_pass@127.0.0.1:3000/api/datasources
 }
+
 function add_dashboard () {
-  echo "{\"dashboard\": `cat $1` }" | curl --output /dev/null --silent\
+  echo "Adding dashboard from $1"
+  echo "{\"dashboard\": `cat $1` , \
+   \"inputs\": [{\"name\": \"DS_PROMETHEUS\", \
+              \"pluginId\": \"prometheus\", \"type\": \"datasource\", \
+              \"value\":\"Prometheus\"}], \
+   \"overwrite\": true}" | curl --output /dev/null --silent \
   -H "Content-Type: application/json" -X POST \
-  -d @- http://admin:secret@127.0.0.1:3000/api/dashboards/db
+  -d @- http://admin:$grafana_pass@127.0.0.1:3000/api/dashboards/import
 }
+
 
 function stop {
     #Stop the aplication
-    docker stop alertmanager prom-server grafana
+    docker stop telegram-bot alertmanager prom-server grafana
 }
 
 function start {
     #start the aplication
-    docker start alertmanager prom-server grafana
+    docker start telegram-bot alertmanager prom-server grafana
 }
 
 function restart {
     #restart the aplication
-    docker restart alertmanager prom-server grafana
+    docker restart telegram-bot alertmanager prom-server grafana
 }
 
 function delete {
     #Stop application and delete all data
     stop;
-    docker rm -f alertmanager prom-server grafana
+    docker rm -f telegram-bot alertmanager prom-server grafana
+}
+
+function reload_config {
+    # Reload configuration
+    alertmanager_ip=$(docker inspect --format={{.NetworkSettings.IPAddress}} alertmanager)
+    curl -X POST http://$alertmanager_ip:9093/-/reload
+    prometheus_ip=$(docker inspect --format={{.NetworkSettings.IPAddress}} prom-server)
+    curl -X POST http://$prometheus_ip:9090/-/reload
+    docker restart telegram-bot
 }
 
 case "$1" in
@@ -84,5 +108,6 @@ case "$1" in
     restart) restart ;;
     stop) stop ;;
     delete) delete ;;
+    reload) reload_config ;;
     *) usage ;;
 esac
